@@ -1,0 +1,242 @@
+[
+  {
+    "question": "What average GPU utilization do real deployments report?",
+    "expected": "Near 50%",
+    "answerable": true,
+    "got": "Real deployments typically report average GPU utilization of just over 50 percent【1】.",
+    "refused": false,
+    "correct": true
+  },
+  {
+    "question": "Which three dynamic schedulers does the paper introduce?",
+    "expected": "Hybrid Priority (HPS), Predictive Backfill (PBS), Smart Batch (SBS)",
+    "answerable": true,
+    "got": "The paper introduces three dynamic schedulers:  \n\n1. **Hybrid‑Priority Scheduler (HPS)** – a multi‑factor scheduler that combines efficiency scoring with aging to prevent starvation.  \n2. **Predictive‑Backfill Scheduler (PBS)** – a scheduler that uses forward‑looking gap analysis and resource forecasting to reduce fragmentation.  \n3. **Smart‑Batch Scheduler (SBS)** – a scheduler that groups compatible jobs to improve packing and shared execution efficiency.  \n\nThese three dynamic schedulers are listed in the document’s description of dynamic schedulers【1】 and reiterated in the discussion of specialized multi‑objective schedulers【2】.",
+    "refused": false,
+    "correct": true
+  },
+  {
+    "question": "What is gang scheduling and why does it cause delays?",
+    "expected": "All assigned GPUs must be available simultaneously and stay dedicated for the job's duration, causing queuing delays for large jobs",
+    "answerable": true,
+    "got": "Not found in the documents.",
+    "refused": true,
+    "correct": false
+  },
+  {
+    "question": "Which fairness-aware policy shares resources proportionally between workloads?",
+    "expected": "Dominant Resource Fairness (DRF)",
+    "answerable": true,
+    "got": "Dominant Resource Fairness (DRF) is the fairness‑aware policy that allocates resources proportionally across competing workloads. 【2】",
+    "refused": false,
+    "correct": true
+  },
+  {
+    "question": "What is node fragmentation?",
+    "expected": "Available GPUs are spread across several nodes, so large multi-GPU jobs cannot be scheduled",
+    "answerable": true,
+    "got": "Node fragmentation occurs when the available GPUs are spread across multiple nodes, which prevents large multi‑GPU jobs from being scheduled. [1]",
+    "refused": false,
+    "correct": true
+  },
+  {
+    "question": "How do bin packing and consolidation differ in fighting fragmentation?",
+    "expected": "Bin packing places small tasks on partly used GPUs; consolidation moves small tasks onto fewer nodes to free contiguous blocks",
+    "answerable": true,
+    "got": "Bin packing tackles **GPU‑level** fragmentation: it packs many small tasks onto partially used GPUs so that each GPU’s compute and memory are more fully utilized【1】.  \n\nConsolidation tackles **node‑level** fragmentation: it migrates smaller tasks onto a limited set of nodes, freeing up whole nodes (or large contiguous blocks of GPUs) so that big multi‑GPU jobs can be scheduled without being blocked by scattered free GPUs【1】.",
+    "refused": false,
+    "correct": true
+  },
+  {
+    "question": "How does the Tiresias scheduler choose which jobs to prioritize?",
+    "expected": "It prioritizes short jobs by estimating their remaining execution time",
+    "answerable": true,
+    "got": "Not found in the documents.",
+    "refused": true,
+    "correct": false
+  },
+  {
+    "question": "What is data parallelism in distributed training?",
+    "expected": "Each GPU holds a full model copy and processes different mini-batches, with gradients combined by All-Reduce",
+    "answerable": true,
+    "got": "Data parallelism (DP) replicates the entire model on each GPU, with each device processing a different mini‑batch of data. After computation, the GPUs aggregate their gradients using an All‑Reduce operation and then synchronize the model parameters. This approach is simple and scales well, though it can incur communication overhead at large batch sizes【3】.",
+    "refused": false,
+    "correct": true
+  },
+  {
+    "question": "Which technique splits optimizer and model states across GPUs?",
+    "expected": "ZeRO",
+    "answerable": true,
+    "got": "The technique that partitions optimizer and model states across GPUs is **ZeRO** [1].",
+    "refused": false,
+    "correct": true
+  },
+  {
+    "question": "What four goals did the authors set for an effective scheduler?",
+    "expected": "Fairness, fragmentation reduction, throughput improvement, predictable behavior",
+    "answerable": true,
+    "got": "The authors defined four core goals for an effective scheduler:  \n\n1. **Fairness** – prevent starvation and keep wait times bounded across heterogeneous job types.  \n2. **Fragmentation Reduction** – place jobs so GPUs are used contiguously rather than scattered.  \n3. **Throughput Improvement** – increase the number of completed jobs per hour by minimizing idle GPU time.  \n4. **Predictable Behavior** – produce stable, explainable scheduling decisions under changing workloads.  \n\n[4]",
+    "refused": false,
+    "correct": true
+  },
+  {
+    "question": "Why was the adaptive multi-factor scheduler considered a failure?",
+    "expected": "It was unstable and hard to tune: objective interference, normalization sensitivity, threshold effects, maintenance burden",
+    "answerable": true,
+    "got": "The adaptive multi‑factor scheduler was judged a failure because its unified scoring model proved unstable and hard to tune. Small changes in weight parameters caused large, unpredictable shifts in scheduling behavior (objective interference), score normalization sometimes gave long jobs higher “efficiency” scores than short ones (normalization sensitivity), and dynamic re‑weighting introduced abrupt changes when queue length crossed preset thresholds (binary threshold effects). These issues made the prioritization erratic, difficult to debug, and overly sensitive to parameter settings, leading to a brittle solution that added more complexity than benefit【1】.",
+    "refused": false,
+    "correct": true
+  },
+  {
+    "question": "What share of the simulated jobs were inference jobs?",
+    "expected": "50%",
+    "answerable": true,
+    "got": "The simulated workload consisted of 50 % inference jobs【1】.",
+    "refused": false,
+    "correct": true
+  },
+  {
+    "question": "How many nodes and how many GPUs per node were in the simulated cluster?",
+    "expected": "8 nodes with 8 GPUs each, 64 total",
+    "answerable": true,
+    "got": "The simulated cluster comprised 8 nodes, each equipped with 8 NVIDIA GPUs (for a total of 64 GPUs)【1】.",
+    "refused": false,
+    "correct": true
+  },
+  {
+    "question": "What percentage of jobs request a single GPU?",
+    "expected": "35%",
+    "answerable": true,
+    "got": "35% of jobs request a single GPU. [3]",
+    "refused": false,
+    "correct": true
+  },
+  {
+    "question": "How does HPS compute a job's priority score?",
+    "expected": "Score = BaseScore x AgingScore x GPUPenalty",
+    "answerable": true,
+    "got": "HPS assigns each job a composite multiplicative score:\n\n**Score = BaseScore × AgingScore × GPUPenalty**【1†L1-L3】【4†L1-L4】\n\n- **BaseScore (efficiency)** – favors short jobs with a smoothed inverse‑time function:  \n  BaseScore = 1 / (1 + remaining time / 3600)【1†L4-L5】\n\n- **AgingScore (fairness)** – boosts jobs that have waited longer than the aging threshold:  \n  If wait time > aging threshold, AgingScore = aging boost × min(wait time / max wait time, 1); otherwise AgingScore = 1【1†L6-L8】\n\n- **GPUPenalty (blocking mitigation)** – penalizes large GPU allocations to curb blocking:  \n  GPUPenalty = 1 / (1 + num GPU / 4)【1†L9-L10】\n\nThe product of these three factors yields the job’s priority score used by HPS.",
+    "refused": false,
+    "correct": true
+  },
+  {
+    "question": "How many schedulers were benchmarked in total?",
+    "expected": "Seven",
+    "answerable": true,
+    "got": "Seven schedulers were benchmarked in total. [1]",
+    "refused": false,
+    "correct": true
+  },
+  {
+    "question": "How is a starved job defined in this study?",
+    "expected": "A job that waits more than 30 minutes before getting GPU resources",
+    "answerable": true,
+    "got": "A starved job is defined as any job that waited longer than 30 minutes before being allocated GPU resources【3】.",
+    "refused": false,
+    "correct": true
+  },
+  {
+    "question": "What is the default aging threshold in HPS?",
+    "expected": "300 seconds (5 minutes)",
+    "answerable": true,
+    "got": "The default aging threshold in HPS is 300 seconds (i.e., aging begins after 5 minutes)【1】.",
+    "refused": false,
+    "correct": true
+  },
+  {
+    "question": "What stability threshold does PBS use when comparing job efficiency?",
+    "expected": "tau = 0.1 (a job must be at least 10% more efficient)",
+    "answerable": true,
+    "got": "PBS uses a stability threshold of τ = 0.1 when comparing job efficiency [4]",
+    "refused": false,
+    "correct": true
+  },
+  {
+    "question": "How does SBS measure the similarity of a batch of jobs?",
+    "expected": "Sim(B) = 1 / (1 + variance of times + variance of GPU counts)",
+    "answerable": true,
+    "got": "SBS computes a similarity score for a batch B by measuring the variance of the jobs’ remaining runtimes (σ²ₜ) and the variance of their GPU counts (σ²_g). The similarity is defined as  \n\n\\[\n\\text{Sim}(B)=\\frac{1}{1+\\sigma^{2}_{t}+\\sigma^{2}_{g}},\n\\]\n\nso lower variance in duration and GPU usage yields a higher similarity value [1].",
+    "refused": false,
+    "correct": true
+  },
+  {
+    "question": "What does PBS do when no small job is suitable for gap filling?",
+    "expected": "Picks a medium-duration job with the smallest GPU footprint",
+    "answerable": true,
+    "got": "When no small job is appropriate, PBS applies its **Blocking Avoidance** rule: it selects a medium‑duration job (remaining time below T) that has the smallest GPU footprint. [1]",
+    "refused": false,
+    "correct": true
+  },
+  {
+    "question": "How many jobs starved under the Hybrid Priority scheduler?",
+    "expected": "12",
+    "answerable": true,
+    "got": "The Hybrid Priority scheduler experienced starvation for **12 jobs**【2】【3】.",
+    "refused": false,
+    "correct": true
+  },
+  {
+    "question": "What throughput did FIFO achieve?",
+    "expected": "12.5 jobs per hour",
+    "answerable": true,
+    "got": "FIFO achieved a throughput of 12.5 jobs per hour [2].",
+    "refused": false,
+    "correct": true
+  },
+  {
+    "question": "What future directions do the authors mention?",
+    "expected": "Hardware-aware placement, adaptive parallelism, preemptive checkpointing, multi-cluster coordination",
+    "answerable": true,
+    "got": "Not found in the documents.",
+    "refused": true,
+    "correct": false
+  },
+  {
+    "question": "What is the capital of France?",
+    "expected": "",
+    "answerable": false,
+    "got": "Not found in the documents.",
+    "refused": true,
+    "correct": true
+  },
+  {
+    "question": "Which programming language was the simulator written in?",
+    "expected": "",
+    "answerable": false,
+    "got": "Not found in the documents.",
+    "refused": true,
+    "correct": true
+  },
+  {
+    "question": "Which exact GPU model, such as A100 or H100, was simulated?",
+    "expected": "",
+    "answerable": false,
+    "got": "Not found in the documents.",
+    "refused": true,
+    "correct": true
+  },
+  {
+    "question": "How much electricity did the simulated cluster consume?",
+    "expected": "",
+    "answerable": false,
+    "got": "Not found in the documents.",
+    "refused": true,
+    "correct": true
+  },
+  {
+    "question": "Was any scheduler tested on a real Kubernetes cluster?",
+    "expected": "",
+    "answerable": false,
+    "got": "Not found in the documents.",
+    "refused": true,
+    "correct": true
+  },
+  {
+    "question": "Who funded this research?",
+    "expected": "",
+    "answerable": false,
+    "got": "Not found in the documents.",
+    "refused": true,
+    "correct": true
+  }
+]
