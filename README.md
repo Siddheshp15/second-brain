@@ -50,3 +50,33 @@ retrieved chunks. MRR = how high the correct page ranks on average.
 ## Run locally
 
 1. Install libraries:
+pip install fastapi uvicorn pymupdf sentence-transformers chromadb streamlit requests python-multipart openai python-dotenv
+
+2. Get a free API key at console.groq.com and create a `.env` file:
+
+GROQ_API_KEY=your_key_here
+
+3. Start the API (terminal 1): `uvicorn api.main:app --reload`
+4. Start the UI (terminal 2): `streamlit run ui/app.py`
+5. Open http://localhost:8501
+
+Run the evaluation: `python -m eval.evaluate`
+
+## Project structure
+
+ingest/ (extract.py, chunk.py) | rag/ (embed.py, retrieve.py, answer.py)
+api/ (main.py) | ui/ (app.py) | eval/ (questions.json, evaluate.py)
+
+## Limitations
+
+- Text-based PDFs only (no OCR for scanned pages)
+- Tables and multi-column layouts may extract poorly
+- Chunks never cross page boundaries, so facts spanning two pages can be missed
+- Evaluated on a single document with a small question set
+- The model sometimes refuses answerable questions (3/24 in my test)
+
+## Future work
+
+Hybrid keyword + vector search, reranking, OCR for scanned PDFs.
+
+.
