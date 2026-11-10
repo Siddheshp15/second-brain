@@ -1,7 +1,8 @@
 import requests
 import streamlit as st
 
-API_URL = "http://localhost:8000"
+import os
+API_URL = os.getenv("API_URL", "http://localhost:8000")
 
 st.set_page_config(page_title="Second Brain", page_icon="🧠", layout="wide")
 st.title("🧠 Second Brain")
